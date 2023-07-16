@@ -12,4 +12,5 @@
 6. Api testing with postman
 7. Middleware & Types of middleware
 8. Express error handling middleware
-9. How to handle http errors
+9. How to handle http errors -http_errors
+10. How to secure Api - xss-clean, express-rate-limit
