@@ -14,3 +14,5 @@
 8. Express error handling middleware
 9. How to handle http errors -http_errors
 10. How to secure Api - xss-clean, express-rate-limit
+11. Environment variable & .gitignore
+12. MVC Architecture
