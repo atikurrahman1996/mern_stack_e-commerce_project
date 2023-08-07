@@ -1,15 +1,17 @@
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const userRouter = require("./routers/userRouter");
 const createError = require("http-errors");
 const xssClean = require("xss-clean");
 const rateLimit = require("express-rate-limit");
+const seedRouter = require("./routers/seedRouter");
 
 const app = express();
 
 const rateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 5,
+  max: 15,
   message: "Too many request from this IP. Try later",
 });
 
@@ -19,17 +21,20 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//using Middleware
+app.use("/api/users", userRouter);
+app.use("/api/seed", seedRouter);
+
+app.get("/", (req, res) => {
+  res.status(200).send({
+    message: "Welcome to the server",
+  });
+});
+
+//using Middleware for testing
 
 app.get("/test", (req, res) => {
   res.status(200).send({
     message: "Welcome to the server, Api is working good",
-  });
-});
-
-app.get("/api/user", (req, res) => {
-  res.status(200).send({
-    message: "User profile is returned",
   });
 });
 
