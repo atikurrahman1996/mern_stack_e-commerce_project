@@ -20,3 +20,5 @@
 14. Schema & Model for users
 15. create seed route for testing
 16. GET /Api/users-> isAdmin->getAllUsers->searchByName and pagination functionality
+17. Response Handler Controller for error or success
+18. GET /Api/users/:id-> get a single user id
