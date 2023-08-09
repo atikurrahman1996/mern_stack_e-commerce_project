@@ -24,3 +24,6 @@
 18. GET /Api/users/:id-> get a single user BY id
 19. How to create services in the backend
 20. DELETE /Api/users/:id-> DELETE a single user BY id
+21. Refactoring and Dynamic, Reusebility
+22. Delete Imgae helper
+23. POST /Api/users/-> create an user
