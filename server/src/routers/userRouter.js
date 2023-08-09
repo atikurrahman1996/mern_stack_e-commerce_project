@@ -3,10 +3,13 @@ const {
   getUsers,
   getUserById,
   deleteUserById,
+  processRegister,
 } = require("../controllers/userController");
 const userRouter = express.Router();
 
 // GET:/api/users
+
+userRouter.post("/process-register", processRegister);
 
 userRouter.get("/", getUsers);
 

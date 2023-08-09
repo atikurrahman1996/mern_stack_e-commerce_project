@@ -26,4 +26,6 @@
 20. DELETE /Api/users/:id-> DELETE a single user BY id
 21. Refactoring and Dynamic, Reusebility
 22. Delete Imgae helper
-23. POST /Api/users/-> create an user
+23. POST /Api/users/process-register-> create an user, process the registration
+24. create jwt
+25. POST /Api/users/verify-> varify and registration
