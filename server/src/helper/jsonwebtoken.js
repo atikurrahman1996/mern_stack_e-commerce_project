@@ -2,11 +2,11 @@ const jwt = require("jsonwebtoken");
 
 const createJsonWebToken = (payload, secretKey, expiresIn) => {
   if (typeof payload !== "object" || !payload) {
-    throw new Error("payload must be a non empty object");
+    throw new Error("payload must be a non-empty object");
   }
 
-  if (typeof secretKey !== "string" || !secretKey == "") {
-    throw new Error("Secret Key must be a non empty string");
+  if (typeof secretKey !== "string" || secretKey === "") {
+    throw new Error("Secret Key must be a non-empty string");
   }
 
   try {
