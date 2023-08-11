@@ -29,5 +29,9 @@
 23. POST /Api/users/process-register-> create an user, process the registration
 24. create jwt
 25. Setup SMTP server
-26. Send Email
-27. POST /Api/users/verify-> varify and registration
+26. Send Email with nodemailer
+27. POST /Api/users/verify-> varify and register into database
+28. Add multer middleware for file upload
+29. add exress validator middleware
+30. should we store image as a string or buffer
+31.

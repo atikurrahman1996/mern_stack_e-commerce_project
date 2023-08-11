@@ -8,7 +8,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "User name is required"],
       trim: true,
-      minLength: [5, "The minimum leanght of user name is 5 characters"],
+      minLength: [3, "The minimum leanght of user name is 5 characters"],
       maxLength: [31, "The maximum leanght of user name is 31 characters"],
     },
     email: {
@@ -33,13 +33,15 @@ const userSchema = new Schema(
     },
 
     image: {
-      type: String,
-      default: defaultImagePath,
+      type: Buffer,
+      contentType: String,
+      required: [true, "User image is required"],
     },
 
     address: {
       type: String,
       required: [true, "User address is required"],
+      minLength: [6, "The minimum leanght of address is 6 characters"],
       trim: true,
     },
 
