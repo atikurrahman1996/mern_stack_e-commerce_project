@@ -1,9 +1,8 @@
 const createError = require("http-errors");
-const fs = require("fs").promises;
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findWithId } = require("../services/findItem");
-const { error } = require("console");
 const { deleteImage } = require("../helper/deleteImage");
 const { createJsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtActivationkey, clientURL } = require("../secret");
@@ -110,7 +109,7 @@ const processRegister = async (req, res, next) => {
     const token = createJsonWebToken(
       { name, email, password, phone, address },
       jwtActivationkey,
-      "10m"
+      "20m"
     );
 
     // prepare email
@@ -142,4 +141,49 @@ const processRegister = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUserById, deleteUserById, processRegister };
+// Verify and activate account
+
+const activateUserAccount = async (req, res, next) => {
+  try {
+    const token = req.body.token;
+    if (!token) throw createError(404, "token not found");
+
+    try {
+      const decoded = jwt.verify(token, jwtActivationkey);
+      if (!decoded) throw createError(404, " user was not able to verify");
+
+      const userExists = await User.exists({ email: decoded.email });
+      if (userExists) {
+        throw createError(
+          409,
+          "User with this email already exist, please sign in"
+        );
+      }
+
+      await User.create(decoded);
+
+      return successResponse(res, {
+        statusCode: 201,
+        message: "user was register successfully",
+      });
+    } catch (error) {
+      if (error.name == "TokenExpiredError") {
+        throw createError(401, "Token has Expired");
+      } else if (error.name == "JsonWebTokenError") {
+        throw createError(401, "Invalid Token");
+      } else {
+        throw error;
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getUsers,
+  getUserById,
+  deleteUserById,
+  processRegister,
+  activateUserAccount,
+};
