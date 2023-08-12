@@ -96,7 +96,20 @@ const processRegister = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
-    const imageBufferString = req.file.buffer.toString("base64");
+    const image = req.file;
+
+    if (!image) {
+      throw createError(400, "Image file is required");
+    }
+
+    if (image.size > 1024 * 1024 * 2) {
+      throw createError(
+        400,
+        "Image file is too large. It must be less than 2MB"
+      );
+    }
+
+    const imageBufferString = image.buffer.toString("base64");
 
     const userExists = await User.exists({ email: email });
     if (userExists) {
@@ -182,10 +195,64 @@ const activateUserAccount = async (req, res, next) => {
   }
 };
 
+const updateUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+
+    const options = { password: 0 };
+    await findWithId(User, userId, options);
+
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+
+    let updates = {};
+
+    //name,password, address, email, phone, image
+
+    for (let key in req.body) {
+      if (["name", "password", "phone", "address"].includes(key)) {
+        updates[key] = req.body[key];
+      } else if (["email"].includes(key)) {
+        throw createError(400, "Email can not be updated");
+      }
+    }
+
+    const image = req.file;
+
+    if (image) {
+      if (image.size > 1024 * 1024 * 2) {
+        throw createError(
+          400,
+          "Image file is too large. It must be less than 2MB"
+        );
+      }
+      updates.image = image.buffer.toString("base64");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updates,
+      updateOptions
+    );
+
+    if (!updatedUser) {
+      throw createError(404, "User with this ID does not exist");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User was update successfully",
+      payload: { updatedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
   deleteUserById,
   processRegister,
   activateUserAccount,
+  updateUserById,
 };
