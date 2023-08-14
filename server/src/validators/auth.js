@@ -38,7 +38,7 @@ const validateUserRegistration = [
     .withMessage("The minimum leanght of address is is 5 characters"),
 
   body("phone").trim().notEmpty().withMessage("phone number is required"),
-
+  /*
   body("image")
     .custom((value, { req }) => {
       if (!req.file || !req.file.buffer) {
@@ -47,6 +47,7 @@ const validateUserRegistration = [
       return true;
     })
     .withMessage("User image is required"),
+    */
 ];
 
 //Sign In validation

@@ -22,7 +22,7 @@ userRouter.post(
   processRegister
 );
 
-userRouter.post("/verify", activateUserAccount);
+userRouter.post("/activate", activateUserAccount);
 
 userRouter.get("/", getUsers);
 

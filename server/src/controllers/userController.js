@@ -96,6 +96,7 @@ const processRegister = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
+    /*
     const image = req.file;
 
     if (!image) {
@@ -111,6 +112,8 @@ const processRegister = async (req, res, next) => {
 
     const imageBufferString = image.buffer.toString("base64");
 
+    */
+
     const userExists = await User.exists({ email: email });
     if (userExists) {
       throw createError(
@@ -122,9 +125,9 @@ const processRegister = async (req, res, next) => {
     // create JWT token
 
     const token = createJsonWebToken(
-      { name, email, password, phone, address, image: imageBufferString },
+      { name, email, password, phone, address },
       jwtActivationkey,
-      "30m"
+      "10m"
     );
 
     // prepare email
@@ -216,6 +219,8 @@ const updateUserById = async (req, res, next) => {
       }
     }
 
+    /*
+
     const image = req.file;
 
     if (image) {
@@ -227,6 +232,7 @@ const updateUserById = async (req, res, next) => {
       }
       updates.image = image.buffer.toString("base64");
     }
+    */
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -241,7 +247,7 @@ const updateUserById = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: "User was update successfully",
-      payload: { updatedUser },
+      payload: updatedUser,
     });
   } catch (error) {
     next(error);
