@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const userRouter = require("./routers/userRouter");
 const createError = require("http-errors");
 const xssClean = require("xss-clean");
@@ -21,6 +22,7 @@ app.use(xssClean());
 app.use(rateLimiter);
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/users", userRouter);
