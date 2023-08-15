@@ -10,7 +10,7 @@ const {
 const upload = require("../middleware/uploadFile");
 const { validateUserRegistration } = require("../validators/auth");
 const runValidation = require("../validators");
-const { isLoggedIn, isLoggeOut } = require("../middleware/auth");
+const { isLoggedIn, isLoggeOut, isAdmin } = require("../middleware/auth");
 const userRouter = express.Router();
 
 // GET:/api/users
@@ -26,7 +26,7 @@ userRouter.post(
 
 userRouter.post("/activate", isLoggeOut, activateUserAccount);
 
-userRouter.get("/", isLoggedIn, getUsers);
+userRouter.get("/", isLoggedIn, isAdmin, getUsers);
 
 userRouter.get("/:id", isLoggedIn, getUserById);
 
