@@ -8,6 +8,8 @@ const { createJsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtActivationkey, clientURL } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 
+// find user
+
 const getUsers = async (req, res, next) => {
   try {
     const search = req.query.search || ""; //empty string
@@ -67,6 +69,9 @@ const getUserById = async (req, res, next) => {
     next(error);
   }
 };
+
+// delete user
+
 const deleteUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -195,6 +200,8 @@ const activateUserAccount = async (req, res, next) => {
   }
 };
 
+// update user
+
 const updateUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -251,6 +258,60 @@ const updateUserById = async (req, res, next) => {
   }
 };
 
+const handleBanUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    await findWithId(User, userId);
+    const updates = { isBanned: true };
+
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updates,
+      updateOptions
+    );
+
+    if (!updatedUser) {
+      throw createError(400, "User was not banned successfully");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User was banned successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const handleUnbanUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    await findWithId(User, userId);
+    const updates = { isBanned: false };
+
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updates,
+      updateOptions
+    );
+
+    if (!updatedUser) {
+      throw createError(400, "User was not un banned successfully");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User was un banned successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
@@ -258,4 +319,6 @@ module.exports = {
   processRegister,
   activateUserAccount,
   updateUserById,
+  handleBanUserById,
+  handleUnbanUserById,
 };

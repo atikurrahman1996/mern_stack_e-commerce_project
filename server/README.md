@@ -34,4 +34,8 @@
 28. Add multer middleware for file upload
 29. add exress validator middleware
 30. should we store image as a string or buffer
-31.
+31. authentication and authorization
+32. POST /Api/auth/login - user login
+33. POST /Api/auth/logout - user logout
+34. Middleware isLoggedIn, isLoggedOut, isAdmin
+35. input validation when signed In
