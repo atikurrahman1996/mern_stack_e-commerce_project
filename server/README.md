@@ -39,3 +39,8 @@
 33. POST /Api/auth/logout - user logout
 34. Middleware isLoggedIn, isLoggedOut, isAdmin
 35. input validation when signed In
+36. PUT/Api/users/ban-user
+37. PUT/Api/users/unban-user
+38. PUT/Api/users/update-password
+39.
+40.

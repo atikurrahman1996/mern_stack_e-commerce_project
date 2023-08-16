@@ -1,5 +1,6 @@
 const createError = require("http-errors");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findWithId } = require("../services/findItem");
@@ -8,7 +9,7 @@ const { createJsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtActivationkey, clientURL } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 
-// find user
+// find/read user
 
 const getUsers = async (req, res, next) => {
   try {
@@ -312,6 +313,42 @@ const handleUnbanUserById = async (req, res, next) => {
   }
 };
 
+const handleUpdatePassword = async (req, res, next) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.params.id;
+    const user = await findWithId(User, userId);
+
+    //compare password
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordMatch) {
+      throw createError(400, "old password is not correct");
+    }
+
+    //const filter = { userId };
+    //const updates = { $set: { password: newPassword } };
+    //const updateOptions = { new: true };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { password: newPassword },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      throw createError(400, "User was not updated successfully");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User Password was Update successfully",
+      payload: { updatedUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
@@ -321,4 +358,5 @@ module.exports = {
   updateUserById,
   handleBanUserById,
   handleUnbanUserById,
+  handleUpdatePassword,
 };
