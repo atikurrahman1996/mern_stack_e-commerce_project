@@ -9,11 +9,15 @@ const {
   handleBanUserById,
   handleUnbanUserById,
   handleUpdatePassword,
+  handleForgetPassword,
+  handleResetPassword,
 } = require("../controllers/userController");
 const upload = require("../middleware/uploadFile");
 const {
   validateUserRegistration,
   validateUserPasswordUpdate,
+  validateUserForgetPassword,
+  validateUserResetPassword,
 } = require("../validators/auth");
 const runValidation = require("../validators");
 const { isLoggedIn, isLoggeOut, isAdmin } = require("../middleware/auth");
@@ -37,6 +41,12 @@ userRouter.get("/", isLoggedIn, isAdmin, getUsers);
 userRouter.get("/:id", isLoggedIn, getUserById);
 
 userRouter.delete("/:id", isLoggedIn, deleteUserById);
+userRouter.put(
+  "/reset-password",
+  validateUserResetPassword,
+  runValidation,
+  handleResetPassword
+);
 
 userRouter.put("/:id", upload.single("image"), isLoggedIn, updateUserById);
 
@@ -49,6 +59,12 @@ userRouter.put(
   runValidation,
   isLoggedIn,
   handleUpdatePassword
+);
+userRouter.post(
+  "/forget-password",
+  validateUserForgetPassword,
+  runValidation,
+  handleForgetPassword
 );
 
 module.exports = userRouter;

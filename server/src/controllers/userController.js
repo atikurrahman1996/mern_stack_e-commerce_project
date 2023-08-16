@@ -6,7 +6,11 @@ const { successResponse } = require("./responseController");
 const { findWithId } = require("../services/findItem");
 const { deleteImage } = require("../helper/deleteImage");
 const { createJsonWebToken } = require("../helper/jsonwebtoken");
-const { jwtActivationkey, clientURL } = require("../secret");
+const {
+  jwtActivationkey,
+  clientURL,
+  jwtResetPasswordkey,
+} = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
 
 // find/read user
@@ -155,7 +159,7 @@ const processRegister = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: `Please go to your ${email} to complete your registration process`,
-      payload: { token },
+      payload: { token }, //used imgaeBufferString inside curly braces if you work with image
     });
   } catch (error) {
     next(error);
@@ -348,6 +352,70 @@ const handleUpdatePassword = async (req, res, next) => {
     next(error);
   }
 };
+const handleForgetPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const userData = await User.findOne({ email: email });
+    if (!userData) {
+      throw createError(
+        404,
+        "Your email is incorrect or you have not varified your email address"
+      );
+    }
+
+    // create JWT token
+
+    const token = createJsonWebToken({ email }, jwtResetPasswordkey, "30m");
+
+    // prepare email
+    const emailData = {
+      email,
+      subject: "Reset Password Email",
+      html: ` 
+  <h2> Hello ${userData.name} </h2>
+  <p> please click here to <a href = "${clientURL}/api/users/reset-password/${token}" target="_blank"> Reset your password  </a></p>
+  `,
+    };
+
+    // send email with nodemailer
+
+    try {
+      await emailWithNodeMailer(emailData);
+    } catch (emailError) {
+      next(
+        createError(500, "Failed to send reset password verification email")
+      );
+      return;
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: `Please go to your ${email} to reset your password`,
+      payload: token,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const handleResetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    const decoded = jwt.verify(token, jwtResetPasswordkey);
+
+    if (!decoded) {
+      throw createError(400, "Invalid or expired token");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User Reset Password was successfully",
+      payload: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getUsers,
@@ -359,4 +427,6 @@ module.exports = {
   handleBanUserById,
   handleUnbanUserById,
   handleUpdatePassword,
+  handleForgetPassword,
+  handleResetPassword,
 };

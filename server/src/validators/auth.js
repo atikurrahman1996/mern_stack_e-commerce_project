@@ -108,8 +108,38 @@ const validateUserPasswordUpdate = [
   }),
 ];
 
+const validateUserForgetPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required. Enter your valid Email")
+    .isEmail()
+    .withMessage("Invalid Email Address"),
+];
+const validateUserResetPassword = [
+  body("token")
+    .trim()
+    .notEmpty()
+    .withMessage("Token is required. Enter your valid token"),
+
+  body("password")
+    .trim()
+    .notEmpty()
+    .withMessage("password is required")
+    .isLength({ min: 6 })
+    .withMessage("password should be atleast 6 characters long")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    )
+    .withMessage(
+      "Password should be combination of one uppercase , one lower case, one number, one special char"
+    ),
+];
+
 module.exports = {
   validateUserRegistration,
   validateUserLogin,
   validateUserPasswordUpdate,
+  validateUserForgetPassword,
+  validateUserResetPassword,
 };
