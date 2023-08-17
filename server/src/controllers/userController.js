@@ -407,6 +407,23 @@ const handleResetPassword = async (req, res, next) => {
       throw createError(400, "Invalid or expired token");
     }
 
+    const filter = { email: decoded.email };
+    const updates = { $set: { password: password } };
+    const updateOptions = { new: true };
+
+    const updatedUser = await User.findOneAndUpdate(
+      filter,
+      updates,
+      updateOptions
+    );
+
+    if (!updatedUser) {
+      throw createError(
+        400,
+        "User reset password was not updated successfully"
+      );
+    }
+
     return successResponse(res, {
       statusCode: 200,
       message: "User Reset Password was successfully",
