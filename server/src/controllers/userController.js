@@ -81,7 +81,7 @@ const deleteUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const options = { password: 0 };
-    const user = await findWithId(User, id, options);
+    await findWithId(User, id, options);
 
     await User.findByIdAndDelete({
       _id: id,
@@ -159,7 +159,6 @@ const processRegister = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       message: `Please go to your ${email} to complete your registration process`,
-      payload: { token }, //used imgaeBufferString inside curly braces if you work with image
     });
   } catch (error) {
     next(error);
@@ -220,10 +219,10 @@ const updateUserById = async (req, res, next) => {
 
     //name,password, address, email, phone, image
 
-    for (let key in req.body) {
+    for (const key in req.body) {
       if (["name", "password", "phone", "address"].includes(key)) {
         updates[key] = req.body[key];
-      } else if (["email"].includes(key)) {
+      } else if (key == "email") {
         throw createError(400, "Email can not be updated");
       }
     }

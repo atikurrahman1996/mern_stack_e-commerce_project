@@ -31,10 +31,10 @@ const handleLogin = async (req, res, next) => {
 
     //access token, cookies
 
-    const accessToken = createJsonWebToken({ user }, jwtAccesskey, "1m");
+    const accessToken = createJsonWebToken({ user }, jwtAccesskey, "15m");
 
     res.cookie("accessToken", accessToken, {
-      maxAge: 1 * 60 * 1000, //35m
+      maxAge: 15 * 60 * 1000, //15m
       httpOnly: true,
       //secure: true,
       sameSite: "none",
@@ -51,10 +51,15 @@ const handleLogin = async (req, res, next) => {
       sameSite: "none",
     });
 
+    // password will not return if we use this below code
+    /*
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
+   */
     return successResponse(res, {
       statusCode: 200,
       message: "User was logged in successfully",
-      payload: { user },
+      payload: { user }, // used userWithoutPassword if we dont return to password
     });
   } catch (error) {
     next(error);
@@ -96,11 +101,11 @@ const handleRefreshToken = async (req, res, next) => {
     const accessToken = createJsonWebToken(
       decodedToken.user,
       jwtAccesskey,
-      "1m"
+      "15m"
     );
 
     res.cookie("accessToken", accessToken, {
-      maxAge: 1 * 60 * 1000, //1m
+      maxAge: 15 * 60 * 1000, //15m
       httpOnly: true,
       //secure: true,
       sameSite: "none",
