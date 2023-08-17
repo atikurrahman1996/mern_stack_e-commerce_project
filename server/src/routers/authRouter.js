@@ -1,5 +1,10 @@
 const express = require("express");
-const { handleLogin, handleLogout } = require("../controllers/authController");
+const {
+  handleLogin,
+  handleLogout,
+  handleRefreshToken,
+  handleProtectedRoute,
+} = require("../controllers/authController");
 const { isLoggeOut, isLoggedIn } = require("../middleware/auth");
 const { validateUserLogin } = require("../validators/auth");
 const runValidation = require("../validators");
@@ -14,5 +19,9 @@ authRouter.post(
   handleLogin
 );
 authRouter.post("/logout", isLoggedIn, handleLogout);
+
+authRouter.get("/refresh-token", handleRefreshToken);
+
+authRouter.get("/protected", handleProtectedRoute);
 
 module.exports = authRouter;

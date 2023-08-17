@@ -116,6 +116,7 @@ const validateUserForgetPassword = [
     .isEmail()
     .withMessage("Invalid Email Address"),
 ];
+
 const validateUserResetPassword = [
   body("token")
     .trim()
