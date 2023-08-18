@@ -8,7 +8,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "User name is required"],
       trim: true,
-      minLength: [3, "The minimum leanght of user name is 5 characters"],
+      minLength: [3, "The minimum leanght of user name is 3 characters"],
       maxLength: [31, "The maximum leanght of user name is 31 characters"],
     },
     email: {

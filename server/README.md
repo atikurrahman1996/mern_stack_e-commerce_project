@@ -48,4 +48,9 @@
 42. GET/Api/auth/protected
 43. refactoring
 44. modular code structure
-45. winston logger library
+45. winston logger library -used to check info in console log and file or folder about information and error
+46. Catagory Model and Input Validation
+47. Catagory CURD- create catagory
+48. Catagory CURD- Read catagory
+49. Catagory CURD- update catagory
+50. Catagory CURD- delete catagory
