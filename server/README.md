@@ -42,5 +42,10 @@
 36. PUT/Api/users/ban-user
 37. PUT/Api/users/unban-user
 38. PUT/Api/users/update-password
-39.
-40.
+39. POST/Api/users/forget-password
+40. PUT/Api/users/reset-password
+41. POST/Api/users/refresh-token
+42. GET/Api/auth/protected
+43. refactoring
+44. modular code structure
+45. winston logger library

@@ -12,6 +12,8 @@ const {
   jwtResetPasswordkey,
 } = require("../secret");
 const emailWithNodeMailer = require("../helper/email");
+const checkUserExists = require("../helper/checkUserExists");
+const sendEmail = require("../helper/sendEmail");
 
 // find/read user
 
@@ -121,7 +123,7 @@ const processRegister = async (req, res, next) => {
 
     */
 
-    const userExists = await User.exists({ email: email });
+    const userExists = await checkUserExists(email);
     if (userExists) {
       throw createError(
         409,
@@ -149,16 +151,12 @@ const processRegister = async (req, res, next) => {
 
     // send email with nodemailer
 
-    try {
-      await emailWithNodeMailer(emailData);
-    } catch (emailError) {
-      next(createError(500, "Failed to send verification email"));
-      return;
-    }
+    sendEmail(emailData);
 
     return successResponse(res, {
       statusCode: 200,
       message: `Please go to your ${email} to complete your registration process`,
+      payload: token,
     });
   } catch (error) {
     next(error);
@@ -262,6 +260,8 @@ const updateUserById = async (req, res, next) => {
   }
 };
 
+// handle banned user
+
 const handleBanUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -289,6 +289,8 @@ const handleBanUserById = async (req, res, next) => {
   }
 };
 
+// handle unbanned user
+
 const handleUnbanUserById = async (req, res, next) => {
   try {
     const userId = req.params.id;
@@ -315,6 +317,8 @@ const handleUnbanUserById = async (req, res, next) => {
     next(error);
   }
 };
+
+// handle user Update Password
 
 const handleUpdatePassword = async (req, res, next) => {
   try {
@@ -351,6 +355,8 @@ const handleUpdatePassword = async (req, res, next) => {
     next(error);
   }
 };
+// handle user Forget Password
+
 const handleForgetPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -378,14 +384,7 @@ const handleForgetPassword = async (req, res, next) => {
 
     // send email with nodemailer
 
-    try {
-      await emailWithNodeMailer(emailData);
-    } catch (emailError) {
-      next(
-        createError(500, "Failed to send reset password verification email")
-      );
-      return;
-    }
+    sendEmail(emailData);
 
     return successResponse(res, {
       statusCode: 200,
@@ -396,6 +395,8 @@ const handleForgetPassword = async (req, res, next) => {
     next(error);
   }
 };
+
+// handle user Reset Password
 
 const handleResetPassword = async (req, res, next) => {
   try {

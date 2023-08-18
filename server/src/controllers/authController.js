@@ -5,6 +5,10 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { createJsonWebToken } = require("../helper/jsonwebtoken");
 const { jwtAccesskey, jwtRefreshkey } = require("../secret");
+const {
+  setAccessTokenCookie,
+  setRefreshTokenCookie,
+} = require("../helper/cookie");
 
 const handleLogin = async (req, res, next) => {
   try {
@@ -33,23 +37,12 @@ const handleLogin = async (req, res, next) => {
 
     const accessToken = createJsonWebToken({ user }, jwtAccesskey, "15m");
 
-    res.cookie("accessToken", accessToken, {
-      maxAge: 15 * 60 * 1000, //15m
-      httpOnly: true,
-      //secure: true,
-      sameSite: "none",
-    });
+    setAccessTokenCookie(res, accessToken);
 
     //refresh token, cookies
 
     const refreshToken = createJsonWebToken({ user }, jwtRefreshkey, "7d");
-
-    res.cookie("refreshToken", refreshToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000, //7d
-      httpOnly: true,
-      //secure: true,
-      sameSite: "none",
-    });
+    setRefreshTokenCookie(res, refreshToken);
 
     // password will not return if we use this below code
     /*
@@ -104,12 +97,7 @@ const handleRefreshToken = async (req, res, next) => {
       "15m"
     );
 
-    res.cookie("accessToken", accessToken, {
-      maxAge: 15 * 60 * 1000, //15m
-      httpOnly: true,
-      //secure: true,
-      sameSite: "none",
-    });
+    setAccessTokenCookie(res, accessToken);
 
     return successResponse(res, {
       statusCode: 200,
