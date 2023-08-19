@@ -22,7 +22,6 @@ const catagorySchema = new Schema(
   { timestamps: true }
 );
 
-// if user created he is not be a admin by defalut, he is not banned by deafult
 // timestamps will return two value , created at and updated at
 
 //Create model

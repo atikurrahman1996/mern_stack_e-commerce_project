@@ -9,6 +9,7 @@ const rateLimit = require("express-rate-limit");
 const seedRouter = require("./routers/seedRouter");
 const { errorResponse } = require("./controllers/responseController");
 const authRouter = require("./routers/authRouter");
+const catagoryRouter = require("./routers/catagoriesRouter");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/seed", seedRouter);
+app.use("/api/catagories", catagoryRouter);
 
 app.get("/", (req, res) => {
   res.status(200).send({
