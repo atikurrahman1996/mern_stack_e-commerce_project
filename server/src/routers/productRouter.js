@@ -7,6 +7,8 @@ const {
   handleCreateProduct,
   handleGetProducts,
   handleGetProduct,
+  handleDeleteProduct,
+  handleUpdateProduct,
 } = require("../controllers/productController");
 const { validateProduct } = require("../validators/product");
 const productRouter = express.Router();
@@ -29,8 +31,22 @@ productRouter.post(
 
 productRouter.get("/", handleGetProducts);
 
-// get single product
+// get single product with slug
 
 productRouter.get("/:slug", handleGetProduct);
+
+// delete single product with slug
+
+productRouter.delete("/:slug", isLoggedIn, isAdmin, handleDeleteProduct);
+
+// update single product with slug
+
+productRouter.put(
+  "/:slug",
+  upload.single("image"),
+  isLoggedIn,
+  isAdmin,
+  handleUpdateProduct
+);
 
 module.exports = productRouter;

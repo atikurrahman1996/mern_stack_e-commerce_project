@@ -8,6 +8,8 @@ const {
   createProduct,
   getProducts,
   getProduct,
+  deleteProduct,
+  updateProduct,
 } = require("../services/productService");
 
 // create new Product
@@ -39,6 +41,7 @@ const handleCreateProduct = async (req, res, next) => {
   }
 };
 
+// get Products
 const handleGetProducts = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1; //assume 1st page
@@ -64,6 +67,7 @@ const handleGetProducts = async (req, res, next) => {
     next(error);
   }
 };
+
 const handleGetProduct = async (req, res, next) => {
   try {
     const { slug } = req.params;
@@ -78,5 +82,59 @@ const handleGetProduct = async (req, res, next) => {
     next(error);
   }
 };
+const handleDeleteProduct = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const product = await deleteProduct(slug);
 
-module.exports = { handleCreateProduct, handleGetProducts, handleGetProduct };
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Single product was deleted succssfully",
+      payload: { product },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const handleUpdateProduct = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+
+    let updates = {};
+
+    const allowedFields = [
+      "name",
+      "description",
+      "price",
+      "sold",
+      "quantity",
+      "shipping",
+    ];
+
+    for (const key in req.body) {
+      if (allowedFields.includes(key)) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const updatedProduct = await updateProduct(slug, updates, updateOptions);
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Product was updated successfully",
+      payload: updatedProduct,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  handleCreateProduct,
+  handleGetProducts,
+  handleGetProduct,
+  handleDeleteProduct,
+  handleUpdateProduct,
+};

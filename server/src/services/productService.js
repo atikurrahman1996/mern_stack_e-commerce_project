@@ -49,5 +49,35 @@ const getProduct = async (slug) => {
 
   return product;
 };
+const deleteProduct = async (slug) => {
+  const product = await Product.findOneAndDelete({ slug });
 
-module.exports = { createProduct, getProducts, getProduct };
+  if (!product) throw createError(404, "no product was found");
+
+  return product;
+};
+const updateProduct = async (slug, updates, updateOptions) => {
+  if (updates.name) {
+    updates.slug = slugify(updates.name);
+  }
+
+  const updatedProduct = await Product.findOneAndUpdate(
+    { slug },
+    updates,
+    updateOptions
+  );
+
+  if (!updatedProduct) {
+    throw createError(404, "product with this slug does not exist");
+  }
+
+  return updatedProduct;
+};
+
+module.exports = {
+  createProduct,
+  getProducts,
+  getProduct,
+  deleteProduct,
+  updateProduct,
+};
